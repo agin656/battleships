@@ -24,7 +24,7 @@
 
 // Include your player here
 //	Professor's contestants
-#include "DumbPlayerV2.h"
+#include "amwplayer.h"
 #include "CleanPlayerV2.h"
 //#include "OrigGamblerPlayer.h"
 
@@ -52,7 +52,7 @@ int main() {
     int statsShotsTaken[NumPlayers];
     int statsGamesCounted[NumPlayers];
     string playerNames[NumPlayers] = { 
-	"Dumb Player",
+	"AMW Player",
 	"Clean Player",
     };
 
@@ -202,7 +202,7 @@ PlayerV2* getPlayer( int playerId, int boardSize ) {
     switch( playerId ) {
 	// Professor provided
 	default:
-	case 0: return new DumbPlayerV2( boardSize );
+	case 0: return new amwplayer( boardSize );
 	case 1: return new CleanPlayerV2( boardSize );
 	//case 2: return new OrigGamblerPlayer( boardSize );
     }
