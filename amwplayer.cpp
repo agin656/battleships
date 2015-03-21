@@ -21,8 +21,7 @@ using namespace conio;
  amwplayer::amwplayer( int boardSize ):
     PlayerV2(boardSize)
 {
-  initializeBoard1();
-  initializeBoard2();
+  this->initializeBoard1();
 }
 
 /**
@@ -65,18 +64,40 @@ void amwplayer::initializeBoard2() {
  * Position 0 of the int array should hold the row, position 1 the column.
  */
 Message amwplayer::getMove() {
-  int arrayfinal [2];
   if( board[lastRow][lastCol] == HIT) {
     sinkShip(lastRow, lastCol, shot);
     Message result(SHOT,shot[0],shot[1],"Bang");
     return result;
   }
+  if(seeifthereisahit( shot )){
+	cout << "it is hear"<< endl<<flush;
+	sinkShip(shot[0], shot[1], shot);
+	Message result(SHOT,shot[0],shot[1],"Bang");
+	return result;
+  }
+  cout << arrayfinalshot[0] << "part one"<< endl<<flush;
+  cout << arrayfinalshot[1] << "part one"<< endl<<flush;
   spotProb();
   greatestProb();
-  lastRow = arrayfinal[0];
-  lastCol = arrayfinal[1];
+  cout << arrayfinalshot[0] << "part two"<< endl<<flush;
+  cout << arrayfinalshot[1] << "part two"<< endl<<flush;
+  lastRow = arrayfinalshot[0];
+  lastCol = arrayfinalshot[1];
   Message result( SHOT, lastRow, lastCol, "Bang", None, 1 );
   return result;
+}
+
+bool amwplayer::seeifthereisahit( int shot[] ) {
+	for(int row=0; row<boardSize; row++) {
+		for(int col=0; col<boardSize; col++) {
+			if(board[row][col] == HIT){
+				shot[0] = row;
+				shot[1] = col;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /**
@@ -92,6 +113,7 @@ void amwplayer::newRound() {
     this->numShipsPlaced = 0;
 
     this->initializeBoard();
+    this->initializeBoard2();
 }
 
 /**
@@ -107,7 +129,7 @@ Message amwplayer::placeShip(int length) {
     snprintf(shipName, sizeof shipName, "Ship%d", numShipsPlaced);
 
     // parameters = mesg type (PLACE_SHIP), row, col, a string, direction (Horizontal/Vertical)
-    Message response( PLACE_SHIP, numShipsPlaced, 0, shipName, Horizontal, length );
+    Message response( PLACE_SHIP, numShipsPlaced+4, 5, shipName, Horizontal, length );
     numShipsPlaced++;
 
     return response;
@@ -134,23 +156,23 @@ void amwplayer::greatestProb(){
       }
     }
   }
-  pickthebestspot(highestarray);
+  pickthebestspot(highestarray, count);
 }
 
 void amwplayer::copyarray1(int array2[], int array3[]){
-	for (int i=0; i< 2 ; i++) { 
+	for (int i=0; i< 2 ; i++) {
 		array3[i] = array2[i];
 	}
 }
 
-void amwplayer::pickthebestspot(int array1[]){
+void amwplayer::pickthebestspot(int array1[], int count){
    int row1;
    int col1;
    //int RCfinal[2];
    int highest = 0;
    int temp1;
 
-   for(int move1=0; move1 < 200; move1 = move1 + 2) {
+   for(int move1=0; move1 < count; move1 = move1 + 2) {
      row1 = array1[move1];
      col1 = array1[move1 + 1];
      if(boardpre[row1][col1] > highest){
@@ -160,14 +182,18 @@ void amwplayer::pickthebestspot(int array1[]){
      }
    }
    if(highest == 0){
-	temp1 = array1[0];
-    arrayfinalshot[0] = temp1;
-	temp1 = array1[1];
-    arrayfinalshot[1] = temp1;
+	    temp1 = array1[0];
+      arrayfinalshot[0] = temp1;
+	    temp1 = array1[1];
+      arrayfinalshot[1] = temp1;
    }
+   
+   cout << arrayfinalshot[0] << endl<<flush;
+   cout << arrayfinalshot[1] << endl<<flush;
  }
 
 void amwplayer::spotProb(){
+initializeBoard2();
   for(int row=0; row<boardSize - 2; row++) {
     for(int col=0; col<boardSize - 2; col++) {
       if( board[row][col] == WATER) {
@@ -179,11 +205,7 @@ void amwplayer::spotProb(){
           }
         }
       }
-    }
-  }
-  for(int row=0; row<boardSize - 2; row++) {
-    for(int col=0; col<boardSize - 2; col++) {
-      if( board[row][col] == WATER) {
+	  if( board[row][col] == WATER) {
         if( board[row][col + 1] == WATER) {
           if( board[row][col + 2] == WATER) {
             boardprob[row][col] += 1;
@@ -194,7 +216,31 @@ void amwplayer::spotProb(){
       }
     }
   }
+  for(int row=boardSize; row>0; row--) {
+    for(int col=boardSize; col>0; col--) {
+      if( board[row][col] == WATER) {
+        if( board[row - 1][col] == WATER) {
+          if( board[row - 2][col] == WATER) {
+            boardprob[row][col] += 1;
+            boardprob[row - 1][col] += 1;
+            boardprob[row - 2][col] += 1;
+          }
+        }
+      }
+	  if( board[row][col] == WATER) {
+        if( board[row][col - 1] == WATER) {
+          if( board[row][col - 2] == WATER) {
+            boardprob[row][col] += 1;
+            boardprob[row][col - 1] += 1;
+            boardprob[row][col - 2] += 1;
+          }
+        }
+      }
+    }
+  }
 }
+
+
 
 void amwplayer::sinkShip( int lastRow, int lastCol, int shot[] ) {
   if ( validFollow( lastRow, lastCol, 0, 1, shot)) return;
@@ -227,15 +273,15 @@ bool amwplayer::validFollow( int row, int col, int irow, int icol, int shot[] ) 
  */
 void amwplayer::update(Message msg) {
     switch(msg.getMessageType()) {
-  case HIT:
-  case KILL:
-  case MISS:
-      board[msg.getRow()][msg.getCol()] = msg.getMessageType();
-      break;
-  case OPPONENT_SHOT:
-      // TODO: get rid of the cout, but replace in your AI with code that does something
-      // useful with the information about where the opponent is shooting.
-      cout << gotoRowCol(20, 30) << "DumbPl: opponent shot at "<< msg.getRow() << ", " << msg.getCol() << flush;
-      break;
-    }
+    case HIT:
+    case KILL:
+    case MISS:
+        board[msg.getRow()][msg.getCol()] = msg.getMessageType();
+        break;
+    case OPPONENT_SHOT:
+        // TODO: get rid of the cout, but replace in your AI with code that does something
+        // useful with the information about where the opponent is shooting.
+        cout << gotoRowCol(20, 30) << "DumbPl: opponent shot at "<< msg.getRow() << ", " << msg.getCol() << flush;
+        break;
+      }
 }

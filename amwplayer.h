@@ -28,25 +28,25 @@ class amwplayer: public PlayerV2 {
       void sinkShip( int lastRow, int lastCol, int shot[] );
       bool validFollow( int row, int col, int irow, int icol, int shot[] );
       void greatestProb();
-      void pickthebestspot(int array1[]);
+      void pickthebestspot(int array1[], int count);
       void spotProb();
-	  void copyarray1(int array2[], int array3[]);
+	    void copyarray1(int array2[], int array3[]);
+	bool seeifthereisahit( int shot[] ); 
       private:
-        void initializeBoard();
-		void initializeBoard1();
-        void initializeBoard2();
-		int board1[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
-		int shot[2];
-		int icol;
-		int irow;		
-        int lastRow;
-        int lastCol;
-        int numShipsPlaced;
-		int arrayfinalshot[2];
-		
-        char board[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
-        int boardprob[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
-        int boardpre[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+          void initializeBoard();
+		      void initializeBoard1();
+          void initializeBoard2();
+		      int board1[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+		      int shot[2];
+		      int icol;
+		      int irow;
+          int lastRow;
+          int lastCol;
+          int numShipsPlaced;
+		      int arrayfinalshot[2];
+          char board[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+          int boardprob[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+          int boardpre[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
 };
 
 #endif
