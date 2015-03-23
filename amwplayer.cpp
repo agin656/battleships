@@ -122,12 +122,17 @@ Message amwplayer::placeShip(int length) {
     char shipName[10];
     // Create ship names each time called: Ship0, Ship1, Ship2, ...
     snprintf(shipName, sizeof shipName, "Ship%d", numShipsPlaced);
-
-    // parameters = mesg type (PLACE_SHIP), row, col, a string, direction (Horizontal/Vertical)
-    Message response( PLACE_SHIP, numShipsPlaced+4, 5, shipName, Horizontal, length );
-    numShipsPlaced++;
-
-    return response;
+	if(boardSize != 10){
+		// parameters = mesg type (PLACE_SHIP), row, col, a string, direction (Horizontal/Vertical)
+		Message response( PLACE_SHIP, numShipsPlaced, 0, shipName, Horizontal, length );
+		numShipsPlaced++;
+		return response;
+	}
+	
+	// parameters = mesg type (PLACE_SHIP), row, col, a string, direction (Horizontal/Vertical)
+	Message response( PLACE_SHIP, numShipsPlaced+4, 5, shipName, Horizontal, length );
+	numShipsPlaced++;
+	return response;
 }
 
 void amwplayer::greatestProb(){
