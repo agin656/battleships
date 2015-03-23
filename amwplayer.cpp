@@ -70,17 +70,12 @@ Message amwplayer::getMove() {
     return result;
   }
   if(seeifthereisahit( shot )){
-	cout << "it is hear"<< endl<<flush;
-	sinkShip(shot[0], shot[1], shot);
-	Message result(SHOT,shot[0],shot[1],"Bang");
-	return result;
+	   sinkShip(shot[0], shot[1], shot);
+	   Message result(SHOT,shot[0],shot[1],"Bang");
+	   return result;
   }
-  cout << arrayfinalshot[0] << "part one"<< endl<<flush;
-  cout << arrayfinalshot[1] << "part one"<< endl<<flush;
   spotProb();
   greatestProb();
-  cout << arrayfinalshot[0] << "part two"<< endl<<flush;
-  cout << arrayfinalshot[1] << "part two"<< endl<<flush;
   lastRow = arrayfinalshot[0];
   lastCol = arrayfinalshot[1];
   Message result( SHOT, lastRow, lastCol, "Bang", None, 1 );
@@ -139,8 +134,8 @@ void amwplayer::greatestProb(){
   int highest = 0;
   int highestarray[200];
   int count = 0;
-  for(int row=0; row<boardSize - 2; row++) {
-    for(int col=0; col<boardSize - 2; col++) {
+  for(int row=0; row < boardSize; row++) {
+    for(int col=0; col < boardSize; col++) {
       if( boardprob[row][col] > highest){
         memset(highestarray, '\0', 200*(sizeof count)); //check if this works
         count = 0;
@@ -156,6 +151,7 @@ void amwplayer::greatestProb(){
       }
     }
   }
+  
   pickthebestspot(highestarray, count);
 }
 
@@ -187,15 +183,19 @@ void amwplayer::pickthebestspot(int array1[], int count){
 	    temp1 = array1[1];
       arrayfinalshot[1] = temp1;
    }
-   
+
    cout << arrayfinalshot[0] << endl<<flush;
    cout << arrayfinalshot[1] << endl<<flush;
  }
 
 void amwplayer::spotProb(){
-initializeBoard2();
-  for(int row=0; row<boardSize - 2; row++) {
-    for(int col=0; col<boardSize - 2; col++) {
+  for(int row=0; row<boardSize; row++) {
+    for(int col=0; col<boardSize; col++) {
+      boardprob[row][col] = 0;
+    }
+  }
+  for(int row=0; row<boardSize; row++) {
+    for(int col=0; col<boardSize; col++) {
       if( board[row][col] == WATER) {
         if( board[row + 1][col] == WATER) {
           if( board[row + 2][col] == WATER) {
@@ -216,34 +216,74 @@ initializeBoard2();
       }
     }
   }
-  for(int row=boardSize; row>0; row--) {
-    for(int col=boardSize; col>0; col--) {
+  for(int row=0; row<boardSize; row++) {
+    for(int col=0; col<boardSize; col++) {
       if( board[row][col] == WATER) {
-        if( board[row - 1][col] == WATER) {
-          if( board[row - 2][col] == WATER) {
-            boardprob[row][col] += 1;
-            boardprob[row - 1][col] += 1;
-            boardprob[row - 2][col] += 1;
+        if( board[row + 1][col] == WATER) {
+          if( board[row + 2][col] == WATER) {
+			  if( board[row + 3][col] == WATER) {
+				boardprob[row][col] += 1;
+				boardprob[row + 1][col] += 1;
+				boardprob[row + 2][col] += 1;
+				boardprob[row + 3][col] += 1;
+			  }
           }
         }
       }
 	  if( board[row][col] == WATER) {
-        if( board[row][col - 1] == WATER) {
-          if( board[row][col - 2] == WATER) {
+        if( board[row][col + 1] == WATER) {
+          if( board[row][col + 2] == WATER) {
+		  if( board[row][col + 3] == WATER) {
             boardprob[row][col] += 1;
-            boardprob[row][col - 1] += 1;
-            boardprob[row][col - 2] += 1;
+            boardprob[row][col + 1] += 1;
+            boardprob[row][col + 2] += 1;
+			boardprob[row][col + 3] += 1;
+		  }
           }
         }
       }
     }
+  }
+  for(int row=0; row<boardSize; row++) {
+    for(int col=0; col<boardSize; col++) {
+      if( board[row][col] == WATER) {
+        if( board[row + 1][col] == WATER) {
+          if( board[row + 2][col] == WATER) {
+			  if( board[row + 3][col] == WATER) {
+				  if( board[row + 4][col] == WATER) {
+				boardprob[row][col] += 1;
+				boardprob[row + 1][col] += 1;
+				boardprob[row + 2][col] += 1;
+				boardprob[row + 3][col] += 1;
+				boardprob[row + 4][col] += 1;
+				}
+			  }
+          }
+        }
+      }
+	  if( board[row][col] == WATER) {
+        if( board[row][col + 1] == WATER) {
+          if( board[row][col + 2] == WATER) {
+			if( board[row][col + 3] == WATER) {
+				if( board[row][col + 4] == WATER) {
+            boardprob[row][col] += 1;
+            boardprob[row][col + 1] += 1;
+            boardprob[row][col + 2] += 1;
+			boardprob[row][col + 3] += 1;
+			boardprob[row][col + 4] += 1;
+		  }
+          }
+        }
+      }
+    }
+  }
   }
 }
 
 
 
 void amwplayer::sinkShip( int lastRow, int lastCol, int shot[] ) {
-  if ( validFollow( lastRow, lastCol, 0, 1, shot)) return;
+  if (validFollow( lastRow, lastCol, 0, 1, shot)) return;
   else if (validFollow( lastRow, lastCol, 0, -1, shot)) return;
   else if (validFollow( lastRow, lastCol, 1, 0, shot)) return;
   else if (validFollow( lastRow, lastCol, -1, 0, shot)) return;
